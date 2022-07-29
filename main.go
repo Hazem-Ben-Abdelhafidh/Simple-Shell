@@ -45,8 +45,16 @@ func remove(name string) {
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 	var commandsHistory []History
+
 forLoop:
 	for {
+		wd, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Print("  ", strings.TrimSuffix(wd, "<nil>"))
+		fmt.Printf("> ")
+
 		input, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -68,10 +76,13 @@ forLoop:
 			createFile(args[1])
 		case "rm":
 			remove(strings.TrimRight(args[1], "\r\n"))
+		case "cd":
+			os.Chdir(strings.TrimRight(args[1], "\r\n"))
 		default:
 			fmt.Println("unknown command!")
 
 		}
+
 	}
 
 }
