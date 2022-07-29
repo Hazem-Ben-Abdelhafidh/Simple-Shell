@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -11,6 +12,16 @@ import (
 type History struct {
 	command string
 	time    string
+}
+
+func createDir(names []string) {
+	for _, name := range names {
+		err := os.Mkdir(strings.TrimRight(name, "\r\n"), 0750)
+		if err != nil && !os.IsExist(err) {
+			log.Fatal(err)
+		}
+		fmt.Println("Directory ", name, " created!")
+	}
 }
 
 func main() {
@@ -33,6 +44,9 @@ forLoop:
 			for i := 0; i < len(commandsHistory); i++ {
 				fmt.Println(commandsHistory[i].time, " ", commandsHistory[i].command)
 			}
+		case "mkdir":
+			createDir(args[1:])
+
 		default:
 			fmt.Println("unknown command!")
 
