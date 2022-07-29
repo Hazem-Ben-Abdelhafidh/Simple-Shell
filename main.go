@@ -33,6 +33,15 @@ func createFile(name string) {
 	}
 	fmt.Println("File ", name, " created!")
 }
+
+// Remove File/Directory
+func remove(name string) {
+	err := os.Remove(name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("File ", name, " Deleted!")
+}
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 	var commandsHistory []History
@@ -57,6 +66,8 @@ forLoop:
 			createDir(args[1:])
 		case "cf":
 			createFile(args[1])
+		case "rm":
+			remove(strings.TrimRight(args[1], "\r\n"))
 		default:
 			fmt.Println("unknown command!")
 
