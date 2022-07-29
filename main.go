@@ -1,34 +1,42 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
 
+type History struct {
+	command string
+	time    string
+}
+
 func main() {
-	fmt.Println("Welcome to the simple Shell!")
-	var command string
-	var commandsHistory []string
-forloop:
+	reader := bufio.NewReader(os.Stdin)
+	var commandsHistory []History
+forLoop:
 	for {
-		fmt.Print(">")
-		fmt.Scan(&command)
-		commandsHistory = append(commandsHistory, command)
-		args := strings.Split(command, " ")
-		switch args[0] {
-		case "cd":
-			os.Chdir(args[1])
-		case "history":
-			for i := 0; i < len(commandsHistory); i++ {
-				fmt.Println(commandsHistory[i])
-			}
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+		commandsHistory = append(commandsHistory, History{command: input, time: time.Now().Format("2006-01-02 15:04:05")})
+		args := strings.Split(input, " ")
+		switch strings.TrimRight(args[0], "\r\n") {
+
 		case "exit":
 			fmt.Println("Exiting...")
-			break forloop
-
+			break forLoop
+		case "history":
+			for i := 0; i < len(commandsHistory); i++ {
+				fmt.Println(commandsHistory[i].time, " ", commandsHistory[i].command)
+			}
 		default:
-			fmt.Println("unknown command")
+			fmt.Println("unknown command!")
+
 		}
 	}
+
 }
